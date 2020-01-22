@@ -43,11 +43,11 @@
 
 #define LEFTFRONTMTR 20
 #define RIGHTFRONTMTR 19
-#define LEFTBACKMTR 10
-#define RIGHTBACKMTR 9
 #define LEFTLIFTMTR 8
 #define RIGHTLIFTMTR 18
-#define INTAKEMTR 15
+#define LEFTINTAKEMTR 15
+#define RIGHTINTAKEMTR 16
+#define RAMPMTR 5
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do

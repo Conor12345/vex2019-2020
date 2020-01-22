@@ -17,9 +17,6 @@
    // -=+=- Motor setup -=+=- //
  	pros::Motor left_front_mtr(LEFTFRONTMTR); // forward
  	pros::Motor right_front_mtr(RIGHTFRONTMTR); // reverse
- 	pros::Motor left_back_mtr(LEFTBACKMTR); // forward
- 	pros::Motor right_back_mtr(RIGHTBACKMTR); // reverse
- 	right_back_mtr.set_reversed(true);
  	right_front_mtr.set_reversed(true);
 
   double wheelDiameterCM = 10.16;
@@ -29,46 +26,20 @@
 
   left_front_mtr.move_relative(ticksToRoate, speed);
   right_front_mtr.move_relative(ticksToRoate, speed);
-  right_back_mtr.move_relative(ticksToRoate, speed);
-  left_back_mtr.move_relative(ticksToRoate, speed);
 
   pros::delay(3000);
  }
 
- void driveSIDE(int distance) { // right is positive
-   // -=+=- Motor setup -=+=- //
- 	pros::Motor left_front_mtr(LEFTFRONTMTR); // forward
- 	pros::Motor right_front_mtr(RIGHTFRONTMTR); // reverse
- 	pros::Motor left_back_mtr(LEFTBACKMTR); // forward
- 	pros::Motor right_back_mtr(RIGHTBACKMTR); // reverse
- 	right_back_mtr.set_reversed(true);
- 	right_front_mtr.set_reversed(true);
-
-  double ticksToRoate = distance * 45;
-
-  left_front_mtr.move_relative( - ticksToRoate, 50);
-  right_front_mtr.move_relative(ticksToRoate, 50);
-  right_back_mtr.move_relative( - ticksToRoate, 50);
-  left_back_mtr.move_relative(ticksToRoate, 50);
-
-  pros::delay(3000);
- }
-
- void turn(int degrees, int direction, int speed = 60) { // right = +1, left = -1
+ void turn(int degrees, int speed = 60) { // right = +1, left = -1
    // -=+=- Motor setup -=+=- //
    pros::Motor left_front_mtr(LEFTFRONTMTR); // forward
    pros::Motor right_front_mtr(RIGHTFRONTMTR); // reverse
-   pros::Motor left_back_mtr(LEFTBACKMTR); // forward
-   pros::Motor right_back_mtr(RIGHTBACKMTR); // reverse
-   right_back_mtr.set_reversed(true);
    right_front_mtr.set_reversed(true);
 
   double ticksToRoate = degrees * 45;
 
-  left_front_mtr.move_relative((ticksToRoate) * direction, speed);
-  right_front_mtr.move_relative( (ticksToRoate) * direction, speed);
-  right_back_mtr.move_relative( (ticksToRoate) * direction, speed);
-  left_back_mtr.move_relative((ticksToRoate) * direction, speed);
+  left_front_mtr.move_relative((ticksToRoate), speed);
+  right_front_mtr.move_relative( (ticksToRoate), speed);
  }
 
  void lift(int distance) { // postive is up
@@ -80,13 +51,32 @@
    right_lift_mtr.move_relative(distance * 50, 80);
  }
 
+ void moveRamp(int degrees) {
+  double degreesToMove = degrees * 7;
+
+  pros::Motor ramp_mtr(RAMPMTR);
+  ramp_mtr.set_reversed(true);
+
+  ramp_mtr.move_relative(degreesToMove, 90);
+ }
+
+ void spinIntake(double time) {
+  pros::Motor left_intake_mtr2(LEFTINTAKEMTR);
+ 	pros::Motor right_intake_mtr2(RIGHTINTAKEMTR);
+ 	right_intake_mtr2.set_reversed(true);
+
+ }
+
 void frontAuton(bool red) {
+  int dir = 0;
   if (red == true){
     int dir = 1; }
   else {
     int dir = -1; }
-  driveFWD(-100);
-  driveFWD(50);
+  driveFWD(100);
+  driveFWD(-50);
+  moveRamp(100);
+  turn(-30 * dir);
 }
 
 void backAuton(bool red) {
@@ -94,12 +84,23 @@ void backAuton(bool red) {
     int dir = 1; }
   else {
     int dir = -1; }
-  driveFWD(-100);
   driveFWD(50);
+  driveFWD(-50);
+
+  pros::Motor right_intake_mtr2(LEFTINTAKEMTR);
+ 	right_intake_mtr2.set_reversed(true);
+  right_intake_mtr2.move(80);
+  pros::delay(500);
+  right_intake_mtr2.move(0);
  }
 
 void testAuton() {
-  turn(180, 1);
+  moveRamp(130);
+  pros::Motor right_intake_mtr2(LEFTINTAKEMTR);
+ 	right_intake_mtr2.set_reversed(true);
+  right_intake_mtr2.move(80);
+  pros::delay(500);
+  right_intake_mtr2.move(0);
 }
 
 void autonomous() {

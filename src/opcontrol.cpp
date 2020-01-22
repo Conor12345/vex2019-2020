@@ -19,16 +19,17 @@ void opcontrol() {
 	// -=+=- Motor setup -=+=- //
 	pros::Motor left_front_mtr(LEFTFRONTMTR); // forward
 	pros::Motor right_front_mtr(RIGHTFRONTMTR); // reverse
-	pros::Motor left_back_mtr(LEFTBACKMTR); // forward
-	pros::Motor right_back_mtr(RIGHTBACKMTR); // reverse
-	right_back_mtr.set_reversed(true);
 	right_front_mtr.set_reversed(true);
 
 	pros::Motor left_lift_mtr(LEFTLIFTMTR); // positive is upards
 	pros::Motor right_lift_mtr(RIGHTLIFTMTR);
 	left_lift_mtr.set_reversed(true);
 
-	pros::Motor intake_mtr(INTAKEMTR); // positive pulls cubes upwards
+	pros::Motor left_intake_mtr(LEFTINTAKEMTR);
+	pros::Motor right_intake_mtr(RIGHTINTAKEMTR);
+	right_intake_mtr.set_reversed(true);
+
+	pros::Motor ramp_mtr(RAMPMTR);
 
 	pros::ADIPotentiometer autonPot(1);
 
@@ -50,31 +51,36 @@ void opcontrol() {
 		joysticks[2] = master.get_analog(ANALOG_LEFT_Y); // joysticks[2]
 		joysticks[3] = master.get_analog(ANALOG_LEFT_X); // joysticks[3]
 
-		int i = 0;
-		for (i = 0; i < 2; i++) {
-			if (abs(joysticks[i]) < threshold) {
-				joysticks[i] = 0;
-			}
-		}
-
 		right_front_mtr.move( (joysticks[2] - joysticks[3]) * multiplier );
-		right_back_mtr.move( (joysticks[2] + joysticks[3]) * multiplier );
 		left_front_mtr.move( (joysticks[2] + joysticks[3]) * multiplier );
-		left_back_mtr.move( (joysticks[2] - joysticks[3]) * multiplier );
 
 		// -=+=- Lift Control -=+=- //
 		left_lift_mtr.move(joysticks[1]);
 		right_lift_mtr.move(joysticks[1]);
 
 		// -=+=- Intake Control -=+=- //
-		if (master.get_digital(DIGITAL_R1)) {
-			intake_mtr.move(127);
+		if (master.get_digital(DIGITAL_R2)) {
+			left_intake_mtr.move(75);
+			right_intake_mtr.move(75);
 		}
-		else if (master.get_digital(DIGITAL_R2)){
-			intake_mtr.move(-127);
+		else if (master.get_digital(DIGITAL_R1)){
+			left_intake_mtr.move(-127);
+			right_intake_mtr.move(-127);
 		}
 		else {
-			intake_mtr.move(0);
+			left_intake_mtr.move(0);
+			right_intake_mtr.move(0);
+		}
+
+		// -=+=- Intake Control -=+=- //
+		if (master.get_digital(DIGITAL_L1)) {
+			ramp_mtr.move(50);
+		}
+		else if (master.get_digital(DIGITAL_L2)){
+			ramp_mtr.move(-50);
+		}
+		else {
+			ramp_mtr.move(0);
 		}
 
 		// -=+=- Autonomous Selector -=+=- //
@@ -98,6 +104,9 @@ void opcontrol() {
 		else {
 			pros::lcd::print(1, "None");
 		}
+
+		pros::lcd::print(2, "Motor temp 1 %d", left_lift_mtr.get_temperature());
+		pros::lcd::print(3, "Motor temp 2 %d", right_lift_mtr.get_temperature());
 
 		pros::delay(20);
 	}

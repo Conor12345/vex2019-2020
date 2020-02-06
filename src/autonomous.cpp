@@ -182,6 +182,7 @@ void autonomous() {
   pros::lcd::clear_line(1);
   pros::ADIPotentiometer autonPot(1);
   pros::delay(200);
+  // TSTSTSSt
   // -=+=- Autonomous Selector -=+=- //
   int potValue = autonPot.get_value() / 40.96;
   pros::lcd::print(2, "Pot: %d", potValue);

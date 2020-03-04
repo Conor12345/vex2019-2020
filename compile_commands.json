@@ -28,7 +28,7 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "C:/Users/Conor/AppData/Local/Temp/tmpez5yjvlj/initialize.cpp.o",
+            "bin/initialize.cpp.o",
             "src\\initialize.cpp"
         ],
         "directory": "C:\\Users\\Conor\\Google Drive\\newvex\\Vex2",

@@ -41,16 +41,25 @@ void opcontrol() {
 	int threshold = 20;
 	int joysticks [4] = {0, 0, 0, 0};
 	float multiplier = 1.0;
+	bool slow = false;
 
 	std::string auton = "";
 
 	while (true) {
 		// -=+=- Drive Control -=+=- //
-		if (controller.get_digital(DIGITAL_X)) {
-			multiplier = 0.4;
+		if (slow) {
+			multiplier = 0.5;
 		}
 		else {
 			multiplier = 1.0;
+		}
+
+		if (controller.get_digital(DIGITAL_UP)) {
+			slow = true;
+		}
+
+		if (controller.get_digital(DIGITAL_DOWN)) {
+			slow = false;
 		}
 
 		joysticks[0] = controller.get_analog(ANALOG_RIGHT_X); // joysticks[0]
@@ -58,8 +67,8 @@ void opcontrol() {
 		joysticks[2] = controller.get_analog(ANALOG_LEFT_Y); // joysticks[2]
 		joysticks[3] = controller.get_analog(ANALOG_LEFT_X); // joysticks[3]
 
-		right_front_mtr.move( (joysticks[2] - joysticks[3]) * multiplier );
-		left_front_mtr.move( (joysticks[2] + joysticks[3]) * multiplier );
+		right_front_mtr.move( (joysticks[2] - joysticks[3]));
+		left_front_mtr.move( (joysticks[2] + joysticks[3]));
 
 		// -=+=- Lift Control -=+=- //
 		left_lift_mtr.move(joysticks[1]);
@@ -67,12 +76,12 @@ void opcontrol() {
 
 		// -=+=- Intake Control -=+=- //
 		if (controller.get_digital(DIGITAL_R2)) {
-			left_intake_mtr.move(75);
-			right_intake_mtr.move(75);
+			left_intake_mtr.move(75 * multiplier);
+			right_intake_mtr.move(75 * multiplier);
 		}
 		else if (controller.get_digital(DIGITAL_R1)){
-			left_intake_mtr.move(-127);
-			right_intake_mtr.move(-127);
+			left_intake_mtr.move(-127 * multiplier);
+			right_intake_mtr.move(-127 * multiplier);
 		}
 		else {
 			left_intake_mtr.move(0);
@@ -113,8 +122,10 @@ void opcontrol() {
 		}
 
 		pros::lcd::print(1, "Auton: %s %d", auton, potValue);
-		pros::lcd::print(2, "Motor temp 1 %f", left_lift_mtr.get_temperature());
-		pros::lcd::print(3, "Motor temp 2 %f", right_lift_mtr.get_temperature());
+		pros::lcd::print(2, "Left Lift Temp %f", left_lift_mtr.get_temperature());
+		pros::lcd::print(3, "Right Lift Temp %f", right_lift_mtr.get_temperature());
+		pros::lcd::print(4, "Left Drive Temp %f", left_front_mtr.get_temperature());
+		pros::lcd::print(5, "Right Drive Temp %f", right_front_mtr.get_temperature());
 
 		pros::delay(20);
 	}

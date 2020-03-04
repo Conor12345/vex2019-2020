@@ -39,15 +39,17 @@
  * You should add more #includes here
  */
 //#include "okapi/api.hpp"
+//sojosndosnfdosnosndonsodnsodn
 //#include "pros/api_legacy.h"
 
+#define TEST 12
 #define LEFTFRONTMTR 20
 #define RIGHTFRONTMTR 19
-#define LEFTLIFTMTR 8
-#define RIGHTLIFTMTR 18
-#define LEFTINTAKEMTR 15
-#define RIGHTINTAKEMTR 16
-#define RAMPMTR 5
+#define LEFTLIFTMTR 7
+#define RIGHTLIFTMTR 8
+#define LEFTINTAKEMTR 9
+#define RIGHTINTAKEMTR 10
+#define RAMPMTR 1
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do

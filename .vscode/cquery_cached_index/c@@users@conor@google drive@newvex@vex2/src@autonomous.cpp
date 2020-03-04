@@ -13,7 +13,7 @@
  */
 
  // 900 ticks per revolution
- void driveFWD(int distance, int speed = 120) {
+ void driveFWD(int distance, int speed = 100) {
    // -=+=- Motor setup -=+=- //
  	pros::Motor left_front_mtr(LEFTFRONTMTR); // forward
  	pros::Motor right_front_mtr(RIGHTFRONTMTR); // reverse
@@ -27,7 +27,11 @@
   left_front_mtr.move_relative(ticksToRoate, speed);
   right_front_mtr.move_relative(ticksToRoate, speed);
 
-  pros::delay(abs(distance) * 20);
+  pros::delay(100);
+
+  while (abs(left_front_mtr.get_actual_velocity()) > 2) {
+    pros::delay(50);
+  }
  }
 
  void turn(int degrees, int speed = 70) { // right = +1, left = -1
@@ -36,10 +40,16 @@
    pros::Motor right_front_mtr(RIGHTFRONTMTR); // reverse
    right_front_mtr.set_reversed(true);
 
-  double ticksToRotate = degrees * 9.2;
+  double ticksToRotate = degrees * 9;
 
   left_front_mtr.move_relative((ticksToRotate), speed);
   right_front_mtr.move_relative( - (ticksToRotate), speed);
+
+  pros::delay(200);
+
+  while (abs(left_front_mtr.get_actual_velocity()) > 2) {
+    pros::delay(50);
+  }
  }
 
  void lift(int distance) { // postive is up
@@ -80,7 +90,7 @@
   ramp_mtr.move_relative(degreesToMove, 90);
  }
 
- void spinIntake(int dir, int speed = 100) { // -1 cubes move up +1 cubes move down
+ void spinIntake(int dir, int speed = 120) { // -1 cubes move up +1 cubes move down
   pros::Motor left_intake_mtr(LEFTINTAKEMTR);
  	pros::Motor right_intake_mtr(RIGHTINTAKEMTR);
  	right_intake_mtr.set_reversed(true);
@@ -99,12 +109,14 @@ void stopIntake() {
  }
 
  void flipOutIntake() {
-  moveRamp(30);
-  pros::delay(200);
+  moveRamp(-40);
+  pros::delay(150);
   pros::Motor left_intake_mtr(LEFTINTAKEMTR);
   left_intake_mtr.move(127);
   pros::delay(500);
   left_intake_mtr.move(0);
+  moveRamp(40);
+  pros::delay(150);
  }
 
  void moveLift(int time, int dir) { //dir +1 up -1 down
@@ -119,66 +131,115 @@ void stopIntake() {
   right_lift_mtr.move(0);
  }
 
-void frontAuton() { // 100cm in 3s 20cm 600 10cm 300
-  driveFWD(-50);
-  driveFWD(50);
+ void oldFrontAuton() { // 100cm in 3s 20cm 600 10cm 300
+   driveFWD(-50);
+   driveFWD(50);
+   flipOutIntake();
+ }
+
+ void redFrontAuton() { // 100cm in 3s 20cm 600 10cm 300
+   driveFWD(20, 80);
+   driveFWD(-25, 80);
+   flipOutIntake();
+   spinIntake(-1);
+   driveFWD(60);
+   pros::delay(500);
+   stopIntake();
+   driveFWD(-10);
+   turn(125);
+   driveFWD(80);
+   driveFWD(-11);
+   moveLift(600, 1);
+   spinIntake(1, 50);
+   pros::delay(800);
+   stopIntake();
+   moveLift(1000, 1);
+   driveFWD(5);
+   spinIntake(1, 50);
+   pros::delay(1000);
+   moveLift(1200, 1);
+   spinIntake(1, 50);
+   moveLift(500, 1);
+   driveFWD(-20);
+   stopIntake();
+ }
+
+
+void blueFrontAuton() {
+  driveFWD(20, 80);
+  driveFWD(-25, 80);
   flipOutIntake();
+  spinIntake(-1);
+  driveFWD(60);
+  pros::delay(500);
+  stopIntake();
+  driveFWD(-10);
+  turn(-125);
+  driveFWD(80);
+  driveFWD(-11);
+  moveLift(600, 1);
+  spinIntake(1, 50);
+  pros::delay(800);
+  stopIntake();
+  moveLift(1000, 1);
+  driveFWD(5);
+  spinIntake(1, 50);
+  pros::delay(1000);
+  moveLift(1200, 1);
+  spinIntake(1, 50);
+  moveLift(500, 1);
+  driveFWD(-20);
+  stopIntake();
 }
 
 void redBackAuton() {
-  driveFWD(30, 60);
-  pros::delay(500);
+  driveFWD(40, 60);
   driveFWD(-50, 60);
   flipOutIntake();
-  moveRamp(-30);
-  pros::delay(500);
   spinIntake(-1);
-  driveFWD(70, 60);
-  pros::delay(600);
+  driveFWD(70);
   stopIntake();
-  driveFWD(-55);
+  driveFWD(-90);
+  driveFWD(25);
   turn(-90);
-  pros::delay(1000);
   driveFWD(55);
-  turn(-30);
-  pros::delay(500);
   spinIntake(1, 50);
   pros::delay(800);
   stopIntake();
   moveLift(1300, 1);
   spinIntake(1, 50);
   pros::delay(1300);
-  stopIntake();
   driveFWD(-20);
+  stopIntake();
  }
 
  void blueBackAuton() { //////////////////////////////////////////////////////
-   driveFWD(30, 60);
-   pros::delay(500);
-   driveFWD(-50, 60);
+   driveFWD(10, 60);
+   driveFWD(-20, 60);
    flipOutIntake();
-   moveRamp(-30);
+   moveRamp(30);
    pros::delay(500);
    spinIntake(-1);
    driveFWD(70, 60);
-   pros::delay(1000);
    stopIntake();
    driveFWD(-90);
-   turn(165);
-   pros::delay(2000);
-   driveFWD(40);
+   driveFWD(25);
+   turn(90);
+   pros::delay(500);
+   driveFWD(55);
    spinIntake(1, 50);
    pros::delay(700);
    stopIntake();
-   moveLift(1300, 1);
+   moveLift(1100, 1);
+   turn(-30);
    spinIntake(1, 50);
    pros::delay(1300);
-   stopIntake();
    driveFWD(-20);
+   stopIntake();
   }
 
 void testAuton() {
-  flipOutIntake();
+  oldFrontAuton();
 }
 
 void autonomous() {
@@ -191,7 +252,7 @@ void autonomous() {
   pros::lcd::print(2, "Pot: %d", potValue);
   if (potValue < 20) {
     pros::lcd::print(1, "Auton: Red Front");
-    frontAuton();
+    redFrontAuton();
   }
   else if (potValue < 40) {
     pros::lcd::print(1, "Auton: Red Back");
@@ -199,7 +260,7 @@ void autonomous() {
   }
   else if (potValue < 60) {
     pros::lcd::print(1, "Auton: Blue Front");
-    frontAuton();
+    blueFrontAuton();
   }
   else if (potValue < 80) {
     pros::lcd::print(1, "Auton: Blue Back");
